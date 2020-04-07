@@ -1,0 +1,11 @@
+body {
+	background-color: #000000;
+	margin		: 0px;
+	overflow	: hidden;
+
+	font-family	: arial;
+	
+	-moz-user-select	: none;
+	-webkit-user-select	: none;
+}
+

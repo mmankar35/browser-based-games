@@ -1,0 +1,465 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<title>three.js webgl - interactive - voxel painter</title>
+		<meta charset="utf-8">
+		<style type="text/css">
+			body {
+				font-family: Monospace;
+				background-color: #f0f0f0;
+				margin: 0px;
+				overflow: hidden;
+			}
+			#info {
+				font-size	: 120%;				
+			}
+			#currentColor {
+				display		: inline-block;
+				width		: 15px;
+				height		: 15px;
+				background-color: #F660AB;
+				border		: solid 2px black;
+			}
+
+			#oldie { background-color: #ddd !important }
+		</style>
+		<script type="text/javascript">
+		
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-4037844-20']);
+		  _gaq.push(['_trackPageview']);
+		
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		
+		</script>
+	</head>
+	<body>
+
+		<script type="text/javascript" src="../vendor/three.js/build/Three.js"></script>
+
+		<script type="text/javascript" src="../vendor/three.js/examples/js/Detector.js"></script>
+		<script type="text/javascript" src="../vendor/three.js/examples/js/RequestAnimationFrame.js"></script>
+		<script type="text/javascript" src="../vendor/three.js/examples/js/Stats.js"></script>
+		<script type="text/javascript" src='../vendor/THREEx/THREEx.WindowResize.js'></script>
+
+		<script type="text/javascript">
+
+			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+
+			var container, stats;
+			var camera, scene, renderer;
+			var projector, plane, cube;
+			var mouse2D, mouse3D, ray,
+			rollOveredFace, isShiftDown = false,
+			theta = 45, isAltDown = false, isCtrlDown = false;
+			var cubeColors	= [
+				new THREE.Color().setRGB(1, 0, 0),
+				new THREE.Color().setRGB(0, 1, 0),
+				new THREE.Color().setRGB(0, 0, 1),	
+				new THREE.Color().setRGB(1, 1, 0),
+				new THREE.Color().setRGB(1, 0, 1),
+				new THREE.Color().setRGB(0, 1, 1),	
+				new THREE.Color().setRGB(1, 0.5, 0.5),	
+				new THREE.Color().setRGB(1, 0.5, 1),	
+				new THREE.Color().setRGB(0.5, 0.5, 1),	
+				new THREE.Color().setRGB(0.5, 0.5, 0.5),	
+			];
+			var cubeType	= 0;
+
+			var rollOverMesh, rollOverMaterial, voxelPosition = new THREE.Vector3(), tmpVec = new THREE.Vector3();
+			var cubeGeo, cubeMaterials = [];
+			var i, intersector;
+
+			init();
+			animate();
+
+			function init() {
+
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+				var info = document.createElement( 'div' );
+				info.id	= "info";
+				info.style.position = 'absolute';
+				info.style.top = '10px';
+				info.style.width = '100%';
+				info.style.textAlign = 'center';
+				info.style['z-index'] = '1';
+				info.innerHTML = '<a href="http://github.com/mrdoob/three.js" target="_blank">three.js</a> - voxel painter - webgl'+
+					'<br /><strong>ctrl</strong>: add voxel, <strong>alt</strong>: remove voxel, , <strong>i/k keys</strong>: translate in y, <strong>ASD keys + mouse</strong>: Camera move'+
+					'<br/><strong>0 to 9 keys</strong>: change color, <strong>drop json</strong>: load map file, <a href="javascript:savePNG();">save .png</a>, <a href="javascript:saveJSON();">save .json</a>, current color: <div id="currentColor"></div>';
+				container.appendChild( info );
+
+				renderer = new THREE.WebGLRenderer({
+					antialias		: true,
+					preserveDrawingBuffer	: true
+				});
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				container.appendChild( renderer.domElement );
+
+				camera = new THREE.Camera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
+				camera.position.y = 800;
+				camera.target.position.y = 200;
+
+				camera = new THREE.TrackballCamera({
+				
+					fov: 25,
+					aspect: window.innerWidth / window.innerHeight,
+					near: 50,
+					far: 1e7,
+		
+					rotateSpeed: 0.1,
+					zoomSpeed: 1.2,
+					panSpeed: 0.2,
+		
+					noZoom: false,
+					noPan: false,
+		
+					staticMoving: false,
+					dynamicDampingFactor: 1,
+		
+					keys: [ 'A'.charCodeAt(0), 'S'.charCodeAt(0), 'D'.charCodeAt(0) ], // [ rotateKey, zoomKey, panKey ],
+		
+					domElement: renderer.domElement,
+		
+				});
+				camera.position.y = 800;
+				camera.position.z = 800;
+
+				scene = new THREE.Scene();
+
+				THREEx.WindowResize(renderer, camera);
+
+				// roll-over helpers
+
+				rollOverGeo = new THREE.CubeGeometry( 50, 50, 50 );
+				rollOverMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000, opacity: 0.5, transparent: true } );
+				rollOverMesh = new THREE.Mesh( rollOverGeo, rollOverMaterial );
+				scene.addObject( rollOverMesh );
+
+
+				// cubes
+
+				cubeGeo = new THREE.CubeGeometry( 50, 50, 50 );
+				for( i = 0; i < cubeColors.length; i++ ) {
+					cubeMaterials[i] = new THREE.MeshLambertMaterial( { color: 0x00ff80, shading: THREE.FlatShading, map: THREE.ImageUtils.loadTexture( "textures/square-outline-textured.png" ) } );
+					cubeMaterials[i].color.copy( cubeColors[i] );
+					cubeMaterials[i]._cubeType	= i;
+				}
+				setCubeType(cubeType);
+
+				// picking
+
+				projector = new THREE.Projector();
+
+				// grid
+
+				var planeW	= 50;
+				var planeH	= 50;
+				plane = new THREE.Mesh( new THREE.PlaneGeometry( planeW*50, planeH*50, planeW, planeH ), new THREE.MeshBasicMaterial( { color: 0x555555, wireframe: true } ) );
+				plane.rotation.x = - 90 * Math.PI / 180;
+				scene.addObject( plane );
+
+				mouse2D = new THREE.Vector3( 0, 10000, 0.5 );
+				ray = new THREE.Ray( camera.position, null );
+
+				// Lights
+
+				var ambientLight = new THREE.AmbientLight( 0x606060 );
+				scene.addLight( ambientLight );
+
+				var directionalLight = new THREE.DirectionalLight( 0xffffff );
+				directionalLight.position.set(1,1,1).normalize();
+				scene.addLight( directionalLight );
+
+
+				stats = new Stats();
+				stats.domElement.style.position = 'absolute';
+				stats.domElement.style.top = '0px';
+				container.appendChild( stats.domElement );
+
+				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+				document.addEventListener( 'keydown', onDocumentKeyDown, false );
+				document.addEventListener( 'keyup', onDocumentKeyUp, false );
+				document.addEventListener( 'drop', onDrop, false);
+				document.addEventListener( 'dragover', onDragOver, false);
+
+			}
+
+			function onDragOver(event) {
+				event.preventDefault();
+			}
+
+			function onDrop(event) {
+				event.preventDefault();
+
+				for(var i = 0; i < event.dataTransfer.files.length; i++){
+					var file	= event.dataTransfer.files[i];
+					var reader	= new FileReader();
+					reader.onload = function (event){
+						var dataUri	= event.target.result;
+						var base64	= dataUri.match(/[^,]*,(.*)/)[1];
+						var json	= window.atob(base64);
+						loadJSON( json )
+					};
+					reader.readAsDataURL(file);
+				}
+			}
+
+			function getRealIntersector( intersects ) {
+
+				for( i = 0; i < intersects.length; i++ ) {
+
+					intersector = intersects[ i ];
+
+					if ( intersector.object != rollOverMesh ) {
+
+						return intersector;
+
+					}
+
+				}
+
+				return null;
+
+			}
+
+			function setVoxelPosition( intersector ) {
+
+				tmpVec.copy( intersector.face.normal );
+
+				voxelPosition.add( intersector.point, intersector.object.matrixRotationWorld.multiplyVector3( tmpVec ) );
+
+				voxelPosition.x = Math.floor( voxelPosition.x / 50 ) * 50 + 25;
+				voxelPosition.y = Math.floor( voxelPosition.y / 50 ) * 50 + 25;
+				voxelPosition.z = Math.floor( voxelPosition.z / 50 ) * 50 + 25;
+
+			}
+			
+			var lastPutDelDate	= Date.now();
+			function putDelVoxel(){
+				
+				if( !isAltDown && !isCtrlDown )	return;
+				
+				// rate limiter for the painting
+				if( Date.now() - lastPutDelDate < 0.5 * 1000 )	return;
+				lastPutDelDate	= Date.now();
+
+				var intersects = ray.intersectScene( scene );
+
+				if ( intersects.length > 0 ) {
+
+					intersector = getRealIntersector( intersects );
+
+					// delete cube
+
+					if ( isAltDown ) {
+
+						if ( intersector.object != plane ) {
+
+							scene.removeObject( intersector.object );
+
+						}
+
+					// create cube
+
+					} else if( isCtrlDown ){
+
+						intersector = getRealIntersector( intersects );
+						setVoxelPosition( intersector );
+
+						var voxel = new THREE.Mesh( cubeGeo, cubeMaterials[cubeType] );
+						voxel.position.copy( voxelPosition );
+						voxel.matrixAutoUpdate = false;
+						voxel.updateMatrix();
+						scene.addObject( voxel );
+
+					}
+
+				}
+				
+			}
+
+			function onDocumentMouseMove( event ) {
+
+				//event.preventDefault();
+
+				mouse2D.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+				mouse2D.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+			}
+			
+			function setCubeType(type) {
+
+				cubeType = type;
+
+				document.getElementById("currentColor").style.backgroundColor	= cubeColors[cubeType].getContextStyle();
+
+			}
+			
+			function translateCubes(dx, dy, dz){
+console.log("translateCubes", dx, dy, dz)
+				var children	= scene.children;
+				var voxels	= [];
+
+				for( var i = 0; i < children.length; i++ ) {
+					var child	= children[i];
+
+					if( child instanceof THREE.Mesh === false )			continue;
+					if( child.geometry instanceof THREE.CubeGeometry === false )	continue;
+					if( child === rollOverMesh )					continue;
+
+					child.position.x	+= dx * 50;
+					child.position.y	+= dy * 50;
+					child.position.z	+= dz * 50;
+
+					child.updateMatrix();
+				}
+
+			}
+			
+			function saveJSON() {
+
+				var children	= scene.children;
+				var voxels	= [];
+
+				for( var i = 0; i < children.length; i++ ) {
+					var child	= children[i];
+
+					if( child instanceof THREE.Mesh === false )			continue;
+					if( child.geometry instanceof THREE.CubeGeometry === false )	continue;
+					if( child === rollOverMesh )					continue;
+
+					voxels.push({
+						x	: (child.position.x - 25) / 50,
+						y	: (child.position.y - 25) / 50,
+						z	: (child.position.z - 25) / 50,
+						t	: child.materials[0]._cubeType
+					});
+				}
+				
+				// open a window with the json
+				var dataUri	= "data:application/json;charset=utf-8,"+JSON.stringify(voxels);
+				window.open( dataUri, 'mywindow' );
+
+			}
+			
+			function loadJSON(mapJSON) {
+
+				// delete all cubes
+				var children	= scene.children.slice(0);
+
+				for( var i = 0; i < children.length; i++ ) {
+
+					if( children[i] instanceof THREE.Mesh === false ) continue;
+					if( children[i].geometry instanceof THREE.CubeGeometry === false ) continue;
+					if( children[i] === rollOverMesh ) continue;
+
+					scene.removeChild( children[i] );
+
+				}				
+
+				// push new cubes
+				var voxels	= JSON.parse(mapJSON);
+
+				for( var i = 0; i < voxels.length; i++ ){
+					var voxel = voxels[i];
+
+					var mesh = new THREE.Mesh( cubeGeo, cubeMaterials[voxel.t] );
+					mesh.position.x = voxel.x * 50 + 25;
+					mesh.position.y = voxel.y * 50 + 25;
+					mesh.position.z = voxel.z * 50 + 25;
+					mesh.matrixAutoUpdate = true;
+					mesh.updateMatrix();
+					scene.addObject( mesh );
+					
+				}
+
+			}
+
+			function onDocumentKeyDown( event ) {
+				
+				switch( event.keyCode ) {
+
+					case 17: isCtrlDown = true; break;
+					case 18: isAltDown = true; break;
+
+					case '0'.charCodeAt(0): setCubeType(0);	break;
+					case '1'.charCodeAt(0): setCubeType(1);	break;
+					case '2'.charCodeAt(0): setCubeType(2);	break;
+					case '3'.charCodeAt(0): setCubeType(3);	break;
+					case '4'.charCodeAt(0): setCubeType(4);	break;
+					case '5'.charCodeAt(0): setCubeType(5);	break;
+					case '6'.charCodeAt(0): setCubeType(6);	break;
+					case '7'.charCodeAt(0): setCubeType(7);	break;
+					case '8'.charCodeAt(0): setCubeType(8);	break;
+					case '9'.charCodeAt(0): setCubeType(9);	break;
+					
+					case 'I'.charCodeAt(0): translateCubes(0, +1, 0);	break;
+					case 'K'.charCodeAt(0): translateCubes(0, -1, 0);	break;
+
+				}
+
+			}
+
+			function onDocumentKeyUp( event ) {
+
+				switch( event.keyCode ) {
+
+					case 17: isCtrlDown = false; break;
+					case 18: isAltDown = false; break;
+
+				}
+			}
+
+			function savePNG() {
+
+				window.open( renderer.domElement.toDataURL('image/png'), 'mywindow' );
+
+			}
+
+			//
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				render();
+				stats.update();
+
+			}
+
+			function render() {
+
+				putDelVoxel();
+				
+				// handle rollOverMesh
+				mouse3D = projector.unprojectVector( mouse2D.clone(), camera );
+				ray.direction = mouse3D.subSelf( camera.position ).normalize();
+
+				var intersects = ray.intersectScene( scene );
+
+				if ( intersects.length > 0 ) {
+
+					intersector = getRealIntersector( intersects );
+					if ( intersector ) {
+
+						setVoxelPosition( intersector );
+						rollOverMesh.position = voxelPosition;
+
+					}
+
+				}
+
+				renderer.render( scene, camera );
+
+			}
+
+		</script>
+
+	</body>
+</html>

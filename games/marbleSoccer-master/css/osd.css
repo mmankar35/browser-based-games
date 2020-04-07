@@ -1,0 +1,77 @@
+#osdContainer {
+	width		: 100%;
+	height		: 100%;
+	position	: absolute;
+	top		: 0;
+	left		: 0;
+	z-index		: 10;
+}
+
+#osdContainer .subContainer {
+	position	: relative;
+}
+
+
+#osdContainer .info {
+	color		: #f0f0f0;
+	text-align	: center;
+	position	: absolute;
+	top		: 0px;
+	width		: 100%;
+	padding-top	: 5px;
+	font-weight	: bolder;
+} 
+
+#osdContainer .info a {
+	color: #80F0bb;
+}
+
+
+#osdContainer .menuLine {
+	font-size	: 300%;
+
+	color		: #EEE;
+	text-shadow	: 0 0 0.2em #44A, 0 0 1em #A66;
+
+	font-weight	: bolder;
+}
+
+#osdContainer .button {
+	cursor		: pointer;
+}
+#osdContainer .button img {
+	padding		: 15px;
+}
+
+#osdContainer .button img:hover {
+	background-color: #888;
+	border-radius	: 0.5em;
+	opacity		: 0.9;
+}
+
+#osdContainer .sidebarLeft {
+	position	: absolute;
+	top		: 10px;
+	left		: 10px;
+	width		: 40em;
+}
+
+#osdContainer .sidebarRight {
+	position	: absolute;
+	top		: 10px;
+	right		: 10px;
+	text-align	: center;
+}
+
+#osdContainer .jqmWindow h3 {
+	text-align	: center;
+}
+
+#osdContainer .helpDialog {
+	width	: 20em;
+	height	: 12em;
+
+	left	: 50%;
+	top	: 50%;
+	margin	: -6em 0 0 -10em;
+}
