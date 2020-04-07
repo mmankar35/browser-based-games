@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+
+<title>ArashiJS</title>
+<link rel=stylesheet media=screen href="arashi.css">
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.js"></script>
+
+<script>window.arashi_devmode = true;</script>
+
+<script src="src/globals.js"></script>
+<script src="src/engine.js"></script>
+<script src="src/random.js"></script>
+<script src="src/soundkit.js"></script>
+<script src="src/grid.js"></script>
+<script src="src/vakit/7segment.js"></script>
+<script src="src/vakit/14segment.js"></script>
+<script src="src/vakit/starfield.js"></script>
+<script src="src/vakit/sizzling.js"></script>
+<script src="src/vakit/logo.js"></script>
+<script src="src/vakit/lightning.js"></script>
+<script src="src/gamestates/title.js"></script>
+<script src="src/gamestates/game.js"></script>
+<script src="src/enemies/plasma.js"></script>
+<script src="src/enemies/spiker.js"></script>
+<script src="src/enemies/spikes.js"></script>
+<script src="src/enemies/pulsar.js"></script>
+
+<script>
+$(document).ready(function () {
+  $('#d').show();
+  $('#s a').focus();
+});
+function start() {
+  $('#d').hide();
+  Engine.start();
+}
+</script>
+
+</head>
+<body>
+
+<div id="h"></div>
+<div id="v"></div>
+<div id="c"><canvas id="game" width="800" height="600"></canvas></div>
+
+<div id="d" style="display: none">
+<p>
+  <strong>Heads-up:</strong> this page contains multimedia content;<br>
+  adjust your speaker volume!
+</p>
+<p>
+  Depends on some fairly new browser features. Make sure your<br>
+  browser is up-to-date! Tested with Firefox 3.5+ and Chrome 5+.
+</p>
+<p id="s">
+  <a href="javascript:start()">Continue</a>
+</p>
+</div>
+
+</body>
+</html>

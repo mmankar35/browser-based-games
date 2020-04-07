@@ -15,12 +15,22 @@ p {
   opacity: 0;
 }
 
-#games-list-section {
+.games-list-section {
   box-shadow: 10px 10px 8px 10px #888888;
+  background-color: aliceblue;
 }
 
 #heading {
   margin-top: 100px;
   text-align: center;
   color: white
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.row>div[class*='col-'] {
+  display: flex;
 }

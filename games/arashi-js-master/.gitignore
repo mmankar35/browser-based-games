@@ -1,0 +1,9 @@
+*.lint.js
+*.pyc
+*.pyo
+dist/arashi.js
+dist/arashi.css
+dist/arashi.html
+dist/snd/*.wav
+dist/snd/*.ogg
+testing.html
