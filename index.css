@@ -1,0 +1,26 @@
+body {
+  background: rgb(169, 228, 247);
+  /* Old browsers */
+  background: -moz-linear-gradient(top, rgba(169, 228, 247, 1) 0%, rgba(15, 180, 231, 1) 25%, rgba(104, 11, 165, 1) 50%, rgba(219, 15, 62, 1) 75%, rgba(169, 228, 247, 1) 100%);
+  /* FF3.6-15 */
+  background: -webkit-linear-gradient(top, rgba(169, 228, 247, 1) 0%, rgba(15, 180, 231, 1) 25%, rgba(104, 11, 165, 1) 50%, rgba(219, 15, 62, 1) 75%, rgba(169, 228, 247, 1) 100%);
+  /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom, rgba(169, 228, 247, 1) 0%, rgba(15, 180, 231, 1) 25%, rgba(104, 11, 165, 1) 50%, rgba(219, 15, 62, 1) 75%, rgba(169, 228, 247, 1) 100%);
+  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  background-size: 100% 400vh;
+  background-repeat: repeat-y;
+}
+
+p {
+  opacity: 0;
+}
+
+#games-list-section {
+  box-shadow: 10px 10px 8px 10px #888888;
+}
+
+#heading {
+  margin-top: 100px;
+  text-align: center;
+  color: white
+}
