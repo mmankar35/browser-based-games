@@ -15,7 +15,7 @@ p {
   opacity: 0;
 }
 
-.games-list-section {
+.game-item {
   box-shadow: 10px 10px 8px 10px #888888;
   background-color: aliceblue;
 }
@@ -67,10 +67,10 @@ span.lastName {
 
 .changing-words:hover span.firstName {
   color: #dedede;
-  cursor: pointer;
+  cursor: default;
 }
 
 .changing-words:hover span.lastName {
   color: #222222;
-  cursor: pointer;
+  cursor: default;
 }
