@@ -15,7 +15,7 @@ p {
   opacity: 0;
 }
 
-.games-list-section {
+.game-item {
   box-shadow: 10px 10px 8px 10px #888888;
   background-color: aliceblue;
 }
@@ -32,4 +32,45 @@ p {
 
 .row>div[class*='col-'] {
   display: flex;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.changing-words {
+  font-family: Helvetica, Helvetica Neue, Arial, sans-serif;
+  font-size: 100px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+span.firstName {
+  color: #222222;
+  text-shadow: 2px 2px 4px #000000;
+}
+
+span.lastName {
+  color: #dedede;
+  text-shadow: 2px 2px 4px #000000;
+}
+
+.changing-words:hover span.firstName {
+  color: #dedede;
+  cursor: default;
+}
+
+.changing-words:hover span.lastName {
+  color: #222222;
+  cursor: default;
 }
