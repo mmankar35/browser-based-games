@@ -1,0 +1,258 @@
+<html>
+<head>
+	<title>Marble Soccer</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/cfbcdiidnfncmcomhfnfbpcpfikjemie"/>
+
+	<link rel='stylesheet' href="css/main.css"		/>
+	<link rel='stylesheet' href="css/osd.css"		/>
+	<link rel='stylesheet' href="css/pageLandingMain.css"	/>
+	<link rel='stylesheet' href="css/embedded.css"		/>
+
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-4037844-20']);
+	  _gaq.push(['_trackPageview']);
+	
+	  (function() {
+	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();		
+	</script>
+</head>
+<body>
+	<body>
+		<!-- *****************************************************************************
+			canvasContainer
+		******************************************************************************** -->
+		<div id="canvasContainer"></div>
+		<!-- *****************************************************************************
+			virtualjoystickContainer
+		******************************************************************************** -->
+		<div id="virtualjoystickContainer"><div class="subContainer">
+		</div></div>
+		<!-- *****************************************************************************
+			OsdContainer
+		******************************************************************************** -->
+		<div id="osdContainer" style="display: none;"><div class="subContainer">
+			<div class="info"><a href="http://learningthreejs.com/blog/categories/tutorial3dgame/" target="_blank">
+				LearningThree.js</a> - Lets make a 3D Game
+				<br/>
+				Use Arrow keys to move - push yellow ball on red squares
+			</div> 
+			<div class="sidebarLeft">
+				<div class="score menuLine">
+					<span class="label">Score:</span>
+					<span class="value"></span>
+				</div>
+				<div class="lives menuLine">
+					<span class="label">Lives:</span>
+					<span class="value"></span>
+				</div>
+				<div class="timeout menuLine">
+					<span class="label">Time:</span>
+					<span class="value">12:45</span>
+				</div>
+			</div>
+			<div class="sidebarRight">
+				<div class="menuLine button">
+					<a class="helpButton" title="Display Help"><img src="images/thenounproject/help.png" alt='Help'/></a>
+				</div>
+				<div class="menuLine  button">
+					<a class="screenshotButton" title="Take a screenshot"><img src="images/thenounproject/camera.png" alt='Screenshot'/></a>
+				</div>
+				<div class="menuLine  button">
+					<a class="fullscreenButton" title="Toggle Fullscreen"><img src="images/thenounproject/fullscreen.png" alt='Fullscreen'/></a>
+				</div>
+			</div>
+			<!-- helpDialog -->
+			<div class="helpDialog jqmWindow">
+				<h3>Welcome in MarbleSoccer</h3>
+				<p>You are a marble in a field!</p>
+				<p>Use <strong>Arrows</strong> to move the player.</p>
+				<p>push the blue ball on the red squares.</p>
+				<p>That's it. Have fun :)</p>
+			</div>
+			<!-- screenshotWindow -->
+			<div class="screenshotWindow" style="display:none;">
+				<div style="width: 100%; height: 100%; cursor: wait; font-family: arial;">
+					<center>
+						<h1>Uploading your
+						<a href="http://marblesoccer.com" target="_blank">MarbleSoccer</a>
+						screenshot to imgur</h1>
+						<h2>Please Wait ...</h2>
+						<img src='' width="100%"></img>
+					</center>
+				</div>
+			</div>
+		</div></div>
+		<!-- *****************************************************************************
+			LandingContainer
+		******************************************************************************** -->
+		<div id="pageLandingContainer" style="display: none;"><div class="subContainer">
+			<div class="pageTitle">
+				<a href="http://learningthreejs.com/blog/categories/tutorial3dgame/" target='_blank'>Marble Soccer</a>
+			</div>
+			<div class="chromeWebstoreInstall" style="display:none;">
+				Chrome Web App <span class="value"></span>
+			</div>
+			<!-- ******** menuDialog ******** -->
+			<div class="menuDialog jqmWindow">
+				<h3>Welcome in MarbleSoccer</h3>
+				<p>You are a marble in a field!</p>
+				<p>Use <strong>Arrows</strong> to move the player
+				And push the blue ball on the red squares.</p>
+				<div class="button play">Play</div>
+				<div class="button tutorial">Tutorial</div>
+				<div class="button about">About</div>
+			</div>
+			<!-- ******** tutorialDialog ******** -->
+			<div class="tutorialDialog jqmWindow">
+				<h3>Tutorial on MarbleSoccer</h3>
+				<p>You are a marble in a field!</p>
+				<p>Use <strong>Arrows</strong> to move the player
+				And push the blue ball on the red squares.</p>
+			</div>
+			<!-- ******** aboutDialog ******** -->
+			<div class="aboutDialog jqmWindow">
+				<h3>About MarbleSoccer</h3>
+				<p>
+					<a href="http://marblesoccer.com">marblesoccer</a>
+					is a game of marble. It is made for the
+					<a href="http://learningthreejs.com/blog/categories/tutorial3dgame/">"let's make a 3D game" series</a> on
+					<a href="http://learningthreejs.com">learningthreejs</a>
+					blog.
+				</p>
+			</div>
+			<!-- ******** nowebglDialog ******** -->
+			<div class="nowebglDialog jqmWindow">
+				<h3>Ouch no WebGL :(</h3>
+				<p>
+					Sorry, WebGL is not available on your computer.
+					You can read <a href='http://notes.jetienne.com/2011/04/13/pacmaze-v1-release.html' target='_blank'>more help on Pacmaze</a>
+					or look at a video of the game.
+					You may try to <a href='http://www.khronos.org/webgl/wiki/Getting_a_WebGL_Implementation'>get a WebGL Implementation</a>.
+					<!--Go <a href='http://www.khronos.org/webgl/wiki/Getting_a_WebGL_Implementation'>get a WebGL Implementation</a>.
+					Or try <a href='?render=canvas'>super experimental/ugly canvas version</a>?-->
+				</p>
+				<center>
+					<span class="youtube"></span>
+				</center> 
+				<p style="font-size: 80%; float: right">
+					try an <b>experimental</b> <a href="/?render=canvas">canvas version</a>
+				</p>
+			</div>
+		</div></div>
+
+		<!-- include weinre client script to debug on mobile -->s
+<!--		<script src="http://192.168.0.10:8080/target/target-script-min.js#anonymous"></script>
+-->
+		<!-- include javascript files -->
+		<script src="vendor/jquery/jquery.min.js"></script>
+		<script src="vendor/jquery/jquery.url.js"></script>
+
+		<!-- **********************************	-->
+		<!-- jquery.jqModal for all the popups	-->
+		<!-- **********************************	-->
+		<script src='vendor/jquery/jqModal.js' 	type='text/javascript'></script>
+		<link  href='vendor/jquery/jqModal.css'	rel='stylesheet' type='text/css' />
+
+		<script src="vendor/three-r46.js/build/Three.js"></script>
+		<script src="vendor/three-r46.js/examples/js/Detector.js"></script>
+		<script src="vendor/three-r46.js/examples/js/Stats.js"></script>
+
+		<script src='vendor/es5-shim/es5-shim.min.js'></script>
+
+		<script src='vendor/underscore/underscore-min.js'></script>
+
+		<script src='vendor/microcache.js/microcache.js'></script>
+		<script src='vendor/microphysics.js/codeflow/physics.js'></script>
+		<script src='vendor/microphysics.js/THREEx.microphysics.js'></script>
+
+		<script src='vendor/THREEx/THREEx.WindowResize.js'></script>
+		<script src='vendor/THREEx/THREEx.SkyMap.js'></script>
+		<script src='vendor/THREEx/THREEx.KeyboardState.js'></script>
+		<script src='vendor/THREEx/THREEx.deviceOrientationState.js'></script>
+		<script src='vendor/THREEx/THREEx.requestAnimationFrame.js'></script>
+
+		<script src='vendor/soundmanager2/script/soundmanager2.js'></script>
+
+		<script src='./vendor/microevent.js/microevent.js'></script>
+		<script src='./vendor/excanvas.js'></script>
+
+		<script src='./vendor/virtualjoystick.js/virtualjoystick.js'></script>
+
+		<script src="https://myapps.mozillalabs.com/jsapi/include.js"></script>
+		<script src='./js/threex.mozillaWebStoreInstall.js'></script>
+
+
+		<script src='./js/threex.chromeWebStoreInstall.js'>	</script>
+		<script src='./js/threex.texturePoolBall.js'>		</script>
+		<script src='./js/threex.fullScreen.js'>		</script>
+		<script src='./js/threex.sparks.js'>			</script>
+		<script src='./js/threex.preloader.js'>			</script>
+
+		<script src="js/lib/core.js"></script>
+		<script src='js/lib/soundmanager2Config.js'></script>
+		<script src="js/lib/sound.js"></script>
+		<script src="js/lib/soundPool.js"></script>
+		<script src="js/lib/voxelMap.js"></script>
+		<script src="js/lib/voxelMapTest.js"></script>
+		<script src='js/lib/microphysics.frictionAccelerator.js'></script>
+		<script src='js/lib/microphysics.maxSpeedAccelerator.js'></script>
+		<script src='js/lib/microphysics.threexKeyboardAccelerator.js'></script>
+		<script src='js/lib/microphysics.threexDeviceOrientationAccelerator.js'></script>
+		<script src='js/lib/microphysics.virtualjoystickAccelerator.js'></script>
+		<script src="js/lib/visualFx.js"></script>
+
+		<script src='tmp/particles-emitter/threex.particlesemitter.js'></script>
+		<script src='tmp/particles-emitter/threex.particlesitem.js'></script>
+
+		<script src="js/map.js"></script>
+		<script src="js/voxel.js"></script>
+		<script src="js/visualFxLightNormal.js"></script>
+		<script src="js/visualFxLightRed.js"></script>
+		<script src="js/visualFxParticles.js"></script>
+		<script src="js/visualFxSparks.js"></script>
+		<script src="js/skymap.js"></script>
+		<script src="js/marble.js"></script>
+		<script src="js/player.js"></script>
+		<script src="js/playerFpsControl.js"></script>
+		<script src="js/enemy.js"></script>
+		<script src="js/ball.js"></script>
+		<script src="js/camera.js"></script>
+		<script src="js/gameLevel.js"></script>
+		<script src="js/osdLayer.js"></script>
+
+		<script src="js/poolBallUtils.js"></script>
+
+		<script src="js/pageLandingMain.js"></script>
+		<script src="js/pageGameMain.js"></script>
+		<script src="js/pageGameLife.js"></script>
+
+		<script src="./vendor/sparks.js/Sparks.js"></script>
+		<script src="./vendor/sparks.js/examples/js/Tween.js"></script>
+
+		<script>
+			jQuery(function(){
+				// TODO use the threex.embedded for that
+				
+				// prevent default actions for arrow keys
+				// - required if this window.document is embedded in another page as an iframe
+				// - it prevent the hosting page to scroll when you use arrows in the game page
+				document.addEventListener('keydown', function(event){
+					var isArrow	= event.keyCode >= 37 && event.keyCode <= 40;
+					if( !isArrow )	return;
+					event.preventDefault();
+				}, true);
+
+				new Marble.PageLandingMain();				
+			})
+
+		</script>
+	</body>
+</body>
+</html>

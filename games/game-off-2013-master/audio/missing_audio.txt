@@ -1,0 +1,12 @@
+ok - gun shoot
+ok - collect item
+- door open
+- success level
+- failed level/dead player
+
+ok - noticed by zombie
+
+ok - player hit also when falling
+- player out of map
+
+ok - zombie hit by bullet (human created)
